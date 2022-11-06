@@ -12,6 +12,30 @@ def count_sort(x: str) -> str:
     sorted_word = ''.join(sorted(x))
     return sorted_word
 
+def bucket_sort2(x_original: str, x: str, idx: list[int], col: int) -> list[int]:
+#Bucket-sort the indices in idx using keys from the string x.
+
+# scan through x and count how often you see each character.
+    countOfChars = dict()
+    for char in x:
+        try:
+            countOfChars[char] += 1
+        except KeyError:
+            countOfChars[char] = 1
+    countOfChars = OrderedDict(sorted(countOfChars.items()))    #sort elements in buckets
+    # buckets: compute the cummulative sun of the table
+    ## make a new table where for key k you have the number of letters with keys k' smaller than k
+    buckets = dict()
+    cumSum = 0
+    for key, value in countOfChars.items():
+        buckets[key] = cumSum
+        cumSum = cumSum + value
+    out = [None] * len(x)
+    for i in idx:
+        pos = buckets[x_original[i+col]] 
+        out[pos] = i
+        buckets[x_original[i+col]] += 1
+    return out, buckets
 
 def bucket_sort(x: str, idx: list[int]) -> list[int]:
     #Bucket-sort the indices in idx using keys from the string x.
@@ -36,7 +60,7 @@ def bucket_sort(x: str, idx: list[int]) -> list[int]:
         pos = buckets[x[i]] 
         out[pos] = i
         buckets[x[i]] += 1
-    return out, buckets
+    return out
 
 def key(x:str, col:int): 
     col_x = ''
@@ -55,7 +79,7 @@ def lsd_radix_sort(x: str) -> list[int]:
     idx = range(0, len(x))
     for col in reversed(idx):
         x_col = key(x, col)
-        idx, buckets = bucket_sort(x_col, idx)
+        idx = bucket_sort(x_col, idx)
     
     return idx
 
@@ -106,33 +130,10 @@ def msd_radix_sort(x: str) -> list[int]:
     return result
 
 
-def bucket_sort2(x_original: str, x: str, idx: list[int], col: int) -> list[int]:
-#Bucket-sort the indices in idx using keys from the string x.
 
-# scan through x and count how often you see each character.
-    countOfChars = dict()
-    for char in x:
-        try:
-            countOfChars[char] += 1
-        except KeyError:
-            countOfChars[char] = 1
-    countOfChars = OrderedDict(sorted(countOfChars.items()))    #sort elements in buckets
-    # buckets: compute the cummulative sun of the table
-    ## make a new table where for key k you have the number of letters with keys k' smaller than k
-    buckets = dict()
-    cumSum = 0
-    for key, value in countOfChars.items():
-        buckets[key] = cumSum
-        cumSum = cumSum + value
-    out = [None] * len(x)
-    for i in idx:
-        pos = buckets[x_original[i+col]] 
-        out[pos] = i
-        buckets[x_original[i+col]] += 1
-    return out, buckets
 
 #test
-def main():
+#def main():
     #print(count_sort('abaab'))
     #print(count_sort(''))
     #print(bucket_sort('abaab', [0, 1, 2, 3, 4]))
@@ -142,13 +143,13 @@ def main():
     #    [5, 2, 3, 0, 4, 1]
     #print(lsd_radix_sort('mississippi'))
     #    [11, 10, 7, 4, 1, 0, 9, 8, 6, 3, 5, 2]
-    print(msd_radix_sort('aba'))
-    print(msd_radix_sort('abaab'))
+    #print(msd_radix_sort('aba'))
+    #print(msd_radix_sort('abaab'))
     #[5, 2, 3, 0, 4, 1]
-    print(msd_radix_sort('mississippi'))
+    #print(msd_radix_sort('mississippi'))
     #[11, 10, 7, 4, 1, 0, 9, 8, 6, 3, 5, 2]
 
 
 
-if __name__ == '__main__':
-    main()
+#if __name__ == '__main__':
+    #main()
